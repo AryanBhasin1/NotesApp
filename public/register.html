@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+
+    input {
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+
+    p {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    p a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Register</h2>
+<form id="registerForm">
+  <input id="name" placeholder="Full Name" required>
+  <input id="email" placeholder="Email" type="email" required>
+  <input id="password" placeholder="Password" type="password" required>
+  <button>Register</button>
+</form>
+
+<p>Already have an account? <a href="login.html">Login here</a></p>
+
+<script>
+document.getElementById('registerForm').onsubmit = async (e)=>{
+  e.preventDefault();
+  const res = await fetch('/auth/register',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name: name.value,
+      email: email.value,
+      password: password.value
+    })
+  });
+  const data = await res.json();
+  if(data.message){
+    alert(data.message);
+    window.location.href='login.html';
+  }
+};
+</script>
+
+</body>
+</html>

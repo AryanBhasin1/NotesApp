@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #notes {
+      width: 400px;
+      margin-bottom: 20px;
+    }
+
+    #notes p {
+      background: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    #notes button {
+      background: #e74c3c;
+      border: none;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #notes button:hover {
+      background: #c0392b;
+    }
+
+    form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    input#text {
+      width: 300px;
+      padding: 10px;
+      border-radius: 5px 0 0 5px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    form button {
+      padding: 10px 20px;
+      border: none;
+      background: #3498db;
+      color: #fff;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    form button:hover {
+      background: #2980b9;
+    }
+
+    button#logoutBtn {
+      background: #95a5a6;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button#logoutBtn:hover {
+      background: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Your Notes</h2>
+<div id="notes"></div>
+
+<form id="noteForm">
+  <input id="text" placeholder="Write a new note">
+  <button>Add</button>
+</form>
+
+<button id="logoutBtn" onclick="logout()">Logout</button>
+
+<script>
+const token = localStorage.getItem('token');
+if(!token) window.location.href='login.html';
+
+async function loadNotes(){
+  const res = await fetch('/notes',{headers:{'Authorization':'Bearer '+token}});
+  const data = await res.json();
+  document.getElementById('notes').innerHTML = data.map(n=>`
+    <p>${n.text} <button onclick="deleteNote(${n.id})">Delete</button></p>
+  `).join('');
+}
+
+document.getElementById('noteForm').onsubmit = async (e)=>{
+  e.preventDefault();
+  await fetch('/notes',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:JSON.stringify({text:text.value})
+  });
+  text.value='';
+  loadNotes();
+}
+
+async function deleteNote(id){
+  await fetch('/notes/'+id,{
+    method:'DELETE',
+    headers:{'Authorization':'Bearer '+token}
+  });
+  loadNotes();
+}
+
+function logout(){
+  localStorage.removeItem('token');
+  window.location.href='login.html';
+}
+
+loadNotes();
+</script>
+
+</body>
+</html>
