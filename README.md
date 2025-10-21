@@ -28,7 +28,7 @@ cd NotesApp
 2. Install dependencies:
 
 ```bash
-npm install
+npm install express bcrypt jsonwebtoken dotenv cors open
 ```
 
 3. Create a `.env` file in the root directory with:
